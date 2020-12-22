@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>Time Counter</title>
+
+<!-- Bootstrap CSS CDN -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+	integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+	crossorigin="anonymous">
+<!-- Our Custom CSS -->
+
+<link th:href="@{/css/style.css}" rel="stylesheet" />
+
+
+<!-- Font Awesome JS -->
+<script defer
+	src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
+	integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
+	crossorigin="anonymous"></script>
+<script defer
+	src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"
+	integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
+	crossorigin="anonymous"></script>
+</head>
+
+<body onload="show();">		
+	<div class="wrapper">
+		<!-- Sidebar Holder -->
+		<nav id="sidebar">
+			<div class="sidebar-header">
+				<h3>TimeCounter</h3>
+			</div>
+
+			<ul class="list-unstyled components">
+				<p><a href="/students/home">Dashboard</a></p>
+				<li><a href="/timetracker"><i class="fas fa-user-clock"></i>  Time Tracker</a></li>
+				<li><a href="/students/report"> <i class="fas fa-chart-bar"></i> Reports</a></li>
+				<li><a href="/students/clientlist"> <i class="fas fa-tasks"></i> All Clients</a></li>
+				<li><a href="/students/add"> <i class="fas fa-plus-circle"></i> Add New Client</a></li>
+				<li><a href="#"> <i class="fas fa-users"></i> Team</a></li>
+				<li><a href="#"> <i class="fas fa-cogs"></i> Settings</a></li>
+				<li><a href="/students/help"> <i class="fas fa-info-circle"></i> Help</a></li>
+				<li><a href="/students/pricing"> <i class="fas fa-arrow-up"></i> Upgrades</a></li>
+			</ul>
+		</nav>
+
+		<!-- Page Content Holder -->
+		<div id="content">
+
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+				<div class="container-fluid">
+
+					<button type="button" id="sidebarCollapse" class="navbar-btn">
+						<span></span> <span></span> <span></span>
+					</button>
+					<button class="btn btn-dark d-inline-block d-lg-none ml-auto"
+						type="button" data-toggle="collapse"
+						data-target="#navbarSupportedContent"
+						aria-controls="navbarSupportedContent" aria-expanded="false"
+						aria-label="Toggle navigation">
+						<i class="fas fa-align-justify"></i>
+					</button>
+
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<ul class="nav navbar-nav ml-auto">
+							<li class="nav-item active"><a class="nav-link" href="#">Account</a>
+							</li>
+							<li class="nav-item"><a class="nav-link" href="/signup">Register</a></li>
+							<li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+							<li class="nav-item"><a class="nav-link" href="#">Logout</a></li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+			<!-- Page Content Holder END -->
+
+			<!-- Time Tracker Start -->
+			
+			<form action="" th:action="@{/adddetails}" th:object="${workdetails}" method="post">
+			
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">		
+				
+					<div class="container-fluid">
+					<div class="" style="width: 100px">
+						<span id="time"></span>
+					</div>
+					<div>
+						<input hidden="true" type="text" th:field="*{time}" class="form-control" id="timetf">
+					</div>
+					<div>
+						<input type="text" th:field="*{worktitle}" class="form-control" id="worktitle" placeholder="What you're working on">
+					</div>
+					<div>
+						<span id="date" name="date"></span>
+					</div>
+					<div>
+						<input hidden="true" type="text" th:field="*{date}" class="form-control" id="datef">
+					</div>
+					<!-- Dropdown button Start Here -->
+					
+   						<div>
+   						
+   						
+   						<select th:field="*{clientname}" class="form-control">
+						<option value="default">Select Client</option>
+    					<option th:each="student : ${Student}" th:value="${student.name}" th:text="${student.name}" id="clientname" name="clientname"></option>
+    					</select>
+						</div>
+					<!-- Dropdown Button end here -->
+					
+					<div>
+						<input type="button" class="btn btn-outline-success" value="Start" onclick="start();">
+						<input type="button" class="btn btn-outline-danger" value="Stop" onclick="stop();">
+						<input type="submit" class="btn btn-outline-primary" value="Save">
+						
+					</div>
+					</div>
+			</nav>
+			</form>
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">		
+		<table class="table table-responsive-md bg-light table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>Project Name</th>
+					<th>Client Name</th>
+					<th>Date</th>
+					<th>Worked</th>
+					<th>Amount Billed</th>
+					<th>Invoice</th>
+				</tr>
+			</thead>
+			<tbody class="bg-light">
+					<tr th:each="workdetail : ${Workdetails}"> 
+					<td th:text="${workdetail.worktitle}"></td>
+					<td th:text="${workdetail.clientname}"></td>
+					<td th:text="${workdetail.date}"></td>
+					<td th:text="${workdetail.time}"></td>
+					<td th:text="${total}"></td>
+					<td><a href="/invoice"><input type="button" class="btn btn-outline-success" value="Send Invoice"></a></td>
+					
+					</tr>
+			</tbody>
+		</table>
+			</nav>
+		</div>
+	</div>
+
+	<!-- jQuery CDN - Slim version (=without AJAX) -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+		crossorigin="anonymous"></script>
+	<!-- Popper.JS -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+		integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+		crossorigin="anonymous"></script>
+	<!-- Bootstrap JS -->
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+		integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+		crossorigin="anonymous"></script>
+
+	<script type="text/javascript">
+	n =  new Date();
+	y = n.getFullYear();
+	m = n.getMonth() + 1;
+	d = n.getDate();
+	document.getElementById("date").innerHTML = m + "-" + d + "-" + y;
+		$(document).ready(function() {
+			$('#sidebarCollapse').on('click', function() {
+				$('#sidebar').toggleClass('active');
+				$(this).toggleClass('active');
+			});
+		});
+
+		var clsStopwatch = function() {
+			// Private vars
+			var startAt = 0; // Time of last start / resume. (0 if not running)
+			var lapTime = 0; // Time on the clock when last stopped in milliseconds
+
+			var now = function() {
+				return (new Date()).getTime();
+				
+			};
+
+			// Public methods
+			// Start or resume
+			this.start = function() {
+				startAt = startAt ? startAt : now();
+			};
+			
+			//Time to Decimal COnverter
+			function timeStringToFloat(time) {
+  			var hoursMinutes = time.split(/[.:]/);
+  			var hours = parseInt(hoursMinutes[0], 10);
+  			var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+  			return hours + minutes / 60;
+  			}
+			// Stop or pause
+			this.stop = function() {
+				// If running, update elapsed time otherwise keep it
+				lapTime = startAt ? lapTime + now() - startAt : lapTime;
+				startAt = 0; // Paused
+				document.getElementById("timetf").value=document.getElementById("time").innerHTML;
+				document.getElementById("datef").value=document.getElementById("date").innerHTML;
+			};
+
+			// Reset
+			this.reset = function() {
+				lapTime = startAt = 0;
+			};
+
+			// Duration
+			this.time = function() {
+				return lapTime + (startAt ? now() - startAt : 0);
+			};
+		};
+
+		var x = new clsStopwatch();
+		var $time;
+		var clocktimer;
+
+		function pad(num, size) {
+			var s = "0000" + num;
+			return s.substr(s.length - size);
+		}
+
+		function formatTime(time) {
+			var h = m = s = 0;
+			//var h = m = s = ms = 0;
+			var newTime = '';
+
+			h = Math.floor(time / (60 * 60 * 1000));
+			time = time % (60 * 60 * 1000);
+			m = Math.floor(time / (60 * 1000));
+			time = time % (60 * 1000);
+			s = Math.floor(time / 1000);
+		//	ms = time % 1000;
+			newTime = pad(h, 2) + ':' + pad(m, 2) + ':' + pad(s, 2) ;
+			//newTime = pad(h, 2) + ':' + pad(m, 2) + ':' + pad(s, 2) + ':' + pad(ms, 3);
+			return newTime;
+		}
+
+		function show() {
+			$time = document.getElementById('time');
+			update();
+		}
+
+		function update() {
+			$time.innerHTML = formatTime(x.time());
+		}
+
+		function start() {
+			clocktimer = setInterval("update()", 1);
+			x.start();
+		}
+
+		function stop() {
+			x.stop();
+			clearInterval(clocktimer);
+		}
+
+		function reset() {
+			stop();
+			x.reset();
+			update();
+		}
+	</script>
+</body>
+
+</html>
